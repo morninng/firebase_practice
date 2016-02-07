@@ -38,11 +38,23 @@ knockout_VM.prototype.set_profile_img = function(img_src){
 	self.profile_img_src(img_src);
 
 }
-knockout_VM.prototype.set_user_name = function(name){
+knockout_VM.prototype.set_first_name = function(first_name){
 
 	var self = this;
-	self.user_name(name);
+	self.first_name(first_name);
 }
+knockout_VM.prototype.set_last_name = function(last_name){
+
+	var self = this;
+	self.last_name(last_name);
+}
+
+knockout_VM.prototype.set_img_src = function(img_src){
+
+	var self = this;
+	self.profile_img_src(img_src);
+}
+
 
 knockout_VM.prototype.remove_all_userinfo = function(){
 
@@ -82,7 +94,7 @@ user_info_trace.prototype.add_user_ref_listener = function(){
 
 	var self = this;
 
-	self.own_user_ref = rootRef.child("users/" + self.own_uid);
+	self.own_user_ref = rootRef.child("users/user_basic/" + self.own_uid);
 	self.own_user_ref.on("value", 
 		self.set_user_info, 
 		self.show_error_log
@@ -103,8 +115,12 @@ user_info_trace.prototype.delete_user_ref_listener = function(){
 user_info_trace.prototype.set_user_info = function(snapshot){
 
 	var value = snapshot.val();
-	var name = value.name;
-	viewModel_obj.set_user_name(name);
+	var first_name = value.first_name;
+	var last_name = value.last_name;
+	var img_src = value.profile_pict;
+	viewModel_obj.set_first_name(first_name);
+	viewModel_obj.set_last_name(last_name);
+	viewModel_obj.set_img_src(img_src);
 }
 
 user_info_trace.prototype.show_error_log = function(error_obj){
@@ -123,22 +139,30 @@ user_info_trace.prototype.login = function(){
 			var uid = authData.uid;
 			var facebook_obj = authData.facebook.cachedUserProfile;
 			var user_basic_ref = rootRef.child("users/user_basic/" + uid);
-			var user_ext_profile_ref = rootRef.child("users/user_basic/" + uid + "/profile");
+			var user_ext_profile_ref = rootRef.child("users/user_ext/" + uid + "/profile");
 
 			var user_basic_obj = new Object();
 			user_basic_obj["profile_pict"] = facebook_obj.picture.data.url;
 			user_basic_obj["first_name"] = facebook_obj.last_name;
 			user_basic_obj["last_name"] = facebook_obj.first_name;
-			user_basic_ref.set(user_basic_obj, function(error){
-				if(error){
-					alert("save fail" + error);
-				}else{
-					console.log("save success");
-				}
-			})
-			
-			
 
+			var user_profile_obj = new Object();
+			user_profile_obj = {
+				gender: {
+					context:facebook_obj.gender
+				}
+			}
+
+
+			user_basic_ref.set(user_basic_obj).then(function(obj){
+
+
+				return user_ext_profile_ref.update(user_profile_obj);
+			}).then(function(obj2){
+				console.log("succeed to save")
+			}, function(error){
+				alert("fail to register user data");
+			});
 		}
 	},
 	{scope: "email,public_profile"}
