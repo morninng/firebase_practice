@@ -1,0 +1,43 @@
+{
+    "rules": {
+        "users":{
+          "$user_id": {
+            ".write": "$user_id === auth.uid",
+            ".validate": "auth != null && newData.val() === auth.uid"
+          }  
+        },
+        "security_test":{
+          "foo":{
+            ".read":true,
+            ".write":true
+            },
+          "messages":{
+            "$message":{
+              ".write":true,
+              ".read": "data.child('timestamp').val() > (now - 600000)",
+              ".validate": "newData.hasChildren(['content', 'timestamp']) && newData.child('content').isString() && newData.child('timestamp').isNumber()"
+            }
+          },
+          "bar":{
+            ".read":false,
+            ".write":false
+          },
+          "rooms":{
+            "$_room":{
+              "topic":{
+                ".write":"$_room.contains('public')",
+                ".read":true
+              }
+            }
+          },
+          "rooms2":{
+            "$_room":{
+              "topic":{
+                ".write":"data.parent().child('ACL_w').val() == true",
+                ".read":true
+              }
+            }
+          }
+        }
+    }
+}

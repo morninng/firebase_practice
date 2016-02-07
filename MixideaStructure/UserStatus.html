@@ -1,0 +1,206 @@
+<html>
+
+<head>
+	<script src="https://cdn.firebase.com/js/client/2.4.0/firebase.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+</head>
+
+<body>
+
+	<input type="button" onclick="user_info_obj.login()" value="login">
+	<input type="button" onclick="user_info_obj.logout()" value="logout">
+
+	<br>
+
+	<span  data-bind="text:user_name"></span><br>
+	<img data-bind="attr: { src: profile_img_src}"><br>
+	<span  data-bind="text:first_name"></span><br>
+	<span  data-bind="text:last_name"></span><br>
+
+
+
+<script>
+function knockout_VM(){
+
+	var self = this;
+	self.profile_img_src = ko.observableArray();
+	self.user_name = ko.observableArray();
+	self.selected_room_id = ko.observable();
+	self.first_name = ko.observable();
+	self.last_name = ko.observable();
+}
+
+knockout_VM.prototype.set_profile_img = function(img_src){
+
+	var self = this;
+	self.profile_img_src(img_src);
+
+}
+knockout_VM.prototype.set_user_name = function(name){
+
+	var self = this;
+	self.user_name(name);
+}
+
+knockout_VM.prototype.remove_all_userinfo = function(){
+
+	var self = this;
+	self.user_name(null);
+}
+
+//gloabal variable
+	var viewModel_obj = new knockout_VM();
+	ko.applyBindings(viewModel_obj);
+	var rootRef = new Firebase("https://mixideastructure.firebaseio.com/");
+	var user_info_obj = null;
+
+
+
+function user_info_trace(){
+	this.own_uid = null;
+}
+
+user_info_trace.prototype.add_auth_listner = function(){
+
+	var self = this;
+
+	rootRef.onAuth(function(auth_obj){
+
+		if(auth_obj){
+			self.own_uid = auth_obj.uid;
+			self.add_user_ref_listener();
+		}else{
+			self.delete_user_ref_listener();
+		}
+	});
+
+}
+
+user_info_trace.prototype.add_user_ref_listener = function(){
+
+	var self = this;
+
+	self.own_user_ref = rootRef.child("users/" + self.own_uid);
+	self.own_user_ref.on("value", 
+		self.set_user_info, 
+		self.show_error_log
+	);
+}
+
+user_info_trace.prototype.delete_user_ref_listener = function(){
+
+	var self = this;
+	if(self.own_user_ref){
+		self.own_user_ref.off("value", self.set_user_info);
+	}
+	viewModel_obj.remove_all_userinfo();
+}
+
+
+
+user_info_trace.prototype.set_user_info = function(snapshot){
+
+	var value = snapshot.val();
+	var name = value.name;
+	viewModel_obj.set_user_name(name);
+}
+
+user_info_trace.prototype.show_error_log = function(error_obj){
+
+	console.log(error_obj);
+
+}
+
+user_info_trace.prototype.login = function(){
+
+	rootRef.authWithOAuthPopup("facebook", function(error, authData) {
+		if (error) {
+			console.log("Login Failed!", error);
+		} else {
+			console.log("Authenticated successfully with payload:", authData);
+			var uid = authData.uid;
+			var facebook_obj = authData.facebook.cachedUserProfile;
+			var user_basic_ref = rootRef.child("users/user_basic/" + uid);
+			var user_ext_profile_ref = rootRef.child("users/user_basic/" + uid + "/profile");
+
+			var user_basic_obj = new Object();
+			user_basic_obj["profile_pict"] = facebook_obj.picture.data.url;
+			user_basic_obj["first_name"] = facebook_obj.last_name;
+			user_basic_obj["last_name"] = facebook_obj.first_name;
+			user_basic_ref.set(user_basic_obj, function(error){
+				if(error){
+					alert("save fail" + error);
+				}else{
+					console.log("save success");
+				}
+			})
+			
+			
+
+		}
+	},
+	{scope: "email,public_profile"}
+	)
+}
+
+
+user_info_trace.prototype.logout = function(){
+
+	rootRef.unauth();
+
+}
+
+
+ user_info_obj = new user_info_trace();
+ user_info_obj.add_auth_listner();
+
+
+
+
+//// security check unit test /////
+
+//profile related
+
+function update_user_info_withoutlogin(){
+
+
+
+}
+
+function update_other_person_info(){
+
+}
+
+function update_user_directory(){
+	
+
+}
+
+function read_public_info(){
+	
+	
+}
+
+function read_private_info_byyourself(){
+	
+	
+}
+
+function read_private_info_of_others(){
+	
+	
+}
+
+
+//profile related
+
+
+</script>
+
+
+
+
+</body>
+</html>
