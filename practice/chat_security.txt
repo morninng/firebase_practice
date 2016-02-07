@@ -1,0 +1,34 @@
+{
+    "rules": {
+      "room_names":{
+        ".read":true,
+        "$room_id":{
+          ".write":"root.child('users/'+auth.uid).exists()"
+        }
+      },
+      "room_messages":{
+        "$room_id":{
+          ".write":"root.child('room_members/' + $room_id + '/' + auth.uid).exists()"
+        },
+        ".read":true
+      },
+      "room_members":{
+        "$room_id":{
+          "$member_id":{
+            ".write": "$member_id === auth.uid  && root.child('users/'+auth.uid).exists() ",
+            ".validate": "newData.isBoolean()" 
+          }
+        } 
+      },
+      "users":{
+        "$user_id":{
+          ".write": "$user_id === auth.uid"  
+        }  
+      },
+      "test":{
+          "child_test":{
+            ".write":true  
+          }
+      }
+    }
+}

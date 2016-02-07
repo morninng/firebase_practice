@@ -152,14 +152,14 @@ user_info_trace.prototype.login = function(){
 					context:facebook_obj.gender
 				}
 			}
+  
 
-
-			user_basic_ref.set(user_basic_obj).then(function(obj){
+			user_basic_ref.set(user_basic_obj).then(function(){
 
 
 				return user_ext_profile_ref.update(user_profile_obj);
-			}).then(function(obj2){
-				console.log("succeed to save")
+			}).then(function(){
+				console.log("succeed to save");
 			}, function(error){
 				alert("fail to register user data");
 			});
