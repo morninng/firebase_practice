@@ -189,16 +189,56 @@ user_info_trace.prototype.logout = function(){
 
 function update_user_info_withoutlogin(){
 
+	uid = "facebook:891587690922207";
+	var user_basic_ref = rootRef.child("users/user_basic/" + uid);
 
+	var user_basic_obj = new Object();
+	user_basic_obj["profile_pict"] = "aaa";
+	user_basic_obj["first_name"] = "bbb";
+	user_basic_obj["last_name"] = "ccc";
+
+	user_basic_ref.set(user_basic_obj, function(error){
+		if(error){
+			console.log("fail");
+		}else{
+			console.log("succeed");
+		}
+	})
 
 }
 
 function update_other_person_info(){
 
+	var otherperson_uid = "facebook:443443795857672";
+	var user_basic_ref = rootRef.child("users/user_basic/" + otherperson_uid);
+
+	var user_basic_obj = new Object();
+	user_basic_obj["profile_pict"] = "aaa";
+	user_basic_obj["first_name"] = "bbb";
+	user_basic_obj["last_name"] = "ccc";
+
+	user_basic_ref.set(user_basic_obj, function(error){
+		if(error){
+			console.log("fail");
+		}else{
+			console.log("succeed");
+		}
+	})
 }
 
 function update_user_directory(){
 	
+	var otherperson_uid = "facebook:443443795857672";
+	var user_basic_ref = rootRef.child("users/user_basic/");
+
+
+	user_basic_ref.set("aaa", function(error){
+		if(error){
+			console.log("fail");
+		}else{
+			console.log("succeed");
+		}
+	})
 
 }
 
@@ -222,6 +262,13 @@ function read_private_info_of_others(){
 
 
 </script>
+
+<input type="button" value = "update_user_info_withoutlogin" onclick="update_user_info_withoutlogin()">
+
+
+
+<input type="button" value = "update_other_person_info" onclick="update_other_person_info()">
+<input type="button" value = "update_user_directory" onclick="update_user_directory()">
 
 
 
