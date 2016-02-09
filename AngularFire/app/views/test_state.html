@@ -1,4 +1,20 @@
 <p>This is the test_state view.</p>
 
 
-{{data}}
+{{root | json}}
+<br><br>
+{{aaa}}
+<input type="button" ng-click = "remove_aaa()" value = "remove_aaa">
+
+<br><br>
+<input type="text" ng-model="three_way_test.$value">
+<input type="button" ng-click = "save_input()" value = "save">
+
+<br><br>
+
+<input type="text" ng-model="three_way_test_2.$value">
+<input type="button" ng-click = "save_input_2()" value = "save">
+
+<br><br>
+
+<input type="button" ng-click = "stop_synch()" value = "stop_synch">
