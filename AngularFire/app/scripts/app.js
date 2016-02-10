@@ -1,4 +1,5 @@
 
+
 'use strict';
 
 /**
@@ -31,7 +32,11 @@ angular.module('angularFireApp')
     templateUrl: 'views/test_state.html',
     controller: 'TestStateCtrl'
   })
-
+  .state('/test-fire-array', {
+    url: "/test-fire-array",
+    templateUrl: 'views/test-fire-array.html',
+    controller: 'TestFireArrayCtrl'
+  })
 
 
 }]);
