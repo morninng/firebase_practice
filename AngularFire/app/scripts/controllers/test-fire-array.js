@@ -28,5 +28,12 @@ angular.module('angularFireApp')
       $scope.filtered_message.$remove(element);
     }
 
+    $scope.update_valule = function(element){
+      var id = element.$id;
+      var updated_content = element.content;
+      var content_ref =  content_array_ref.child(id);
+      content_ref.update({content:updated_content});
+    }
+
 
   });

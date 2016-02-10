@@ -10,8 +10,10 @@ ddd
 <ul>
 <li ng-repeat="message in filtered_message">
 {{message.$id}} {{message.name}}  {{message.content}}
+<input type = "text" ng-model = "message.content">
+
 <input type = "button" ng-click="remove_element(message)" value = "remove">
-	
+<input type = "button" ng-click="update_valule(message)" value = "update_valule">
 	
 </li>
 
